@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caesar Cipher</title>
+    <style>
+        body { 
+            font-family: 'Courier New', Courier, monospace; 
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #4f6d7a, #2f4f4f); 
+            color: #fff;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px); 
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 600;
+            color: #b0c4de; 
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-size: 18px;
+            color: #c2d6e4; 
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0 20px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background: #1c2d3f; 
+            color: #f0f8ff; 
+            font-size: 16px;
+            box-sizing: border-box; /* Ensures padding and border are included in the width calculation */
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        .result {
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+            color: #333;
+            font-size: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            word-wrap: break-word;
+        }
+
+        button {
+            width: 48%; 
+            padding: 12px;
+            background-color: #2a9d8f; 
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 2%; 
+        }
+
+        button[type="reset"] {
+            width: 48%; 
+            background-color: #e76f51; 
+        }
+
+        button:hover {
+            background-color: #264653; 
+        }
+
+        button[type="reset"]:hover {
+            background-color: #d43f00; 
+        }
+
+        .button-container {
+            display: flex;
+            gap: 5px; 
+            justify-content: center; 
+        }
+
+        .error { color: red; font-weight: bold; }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png'); 
+            opacity: 0.1;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Caesar Cipher</h1>
+        <form id="cipherForm">
+            <label for="mode">Encrypt or Decrypt:</label>
+            <select name="mode" id="mode" required>
+                <option value="encrypt">Encrypt</option>
+                <option value="decrypt">Decrypt</option>
+            </select>
+    
+            <label for="key">Key (0 to 25):</label>
+            <input type="number" name="key" id="key" min="0" max="25" required>
+    
+            <label for="message">Message:</label>
+            <textarea name="message" id="message" rows="4" required></textarea>
+    
+            <div class="button-container">
+                <button type="button" onclick="processCipher()">Submit</button>
+                <button type="reset" onclick="resetForm()">Reset</button>
+            </div>
+        </form>
+    
+        <div id="errorMessage" class="error"></div>
+        <h2>Result:</h2>
+        <div id="result" class="result"></div>
+    </div>
+    
+    <script>
+        const SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    
+        function processCipher() {
+            const mode = document.getElementById("mode").value;
+            const key = parseInt(document.getElementById("key").value);
+            const message = document.getElementById("message").value.toUpperCase();
+            const errorMessageDiv = document.getElementById("errorMessage");
+            errorMessageDiv.textContent = '';
+    
+            if (isNaN(key) || key < 0 || key > 25) {
+                errorMessageDiv.textContent = 'Error: Key must be a number between 0 and 25.';
+                return;  
+            }
+    
+            if (message.trim() === '') {
+                errorMessageDiv.textContent = 'Error: Message cannot be empty.';
+                return;  
+            }
+    
+            let translated = '';
+            for (let i = 0; i < message.length; i++) {
+                let symbol = message[i];
+                if (SYMBOLS.includes(symbol)) {
+                    let num = SYMBOLS.indexOf(symbol);
+                    if (mode === 'encrypt') {
+                        num = num + key;
+                    } else if (mode === 'decrypt') {
+                        num = num - key;
+                    }
+                    if (num >= SYMBOLS.length) {
+                        num = num - SYMBOLS.length;
+                    } else if (num < 0) {
+                        num = num + SYMBOLS.length;
+                    }
+                    translated += SYMBOLS[num];
+                } else {
+                    translated += symbol;
+                }
+            }
+            document.getElementById("result").textContent = translated;
+        }
+    
+        function resetForm() {
+            document.getElementById("errorMessage").textContent = '';
+            document.getElementById("result").textContent = '';
+        }
+    </script>
+</body>
+</html>
